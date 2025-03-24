@@ -1,9 +1,16 @@
 name: Playwright Tests
+
+env:
+  USER_PASSWORD: ${{secrets.SECRET_PASSWORD}}
+  USER_LOGIN: ${{secrets.SECRET_LOGIN}}
+  BASE_URL: ${{secrets.BASE_URL}}
+  LOGIN_URL: ${{secrets.LOGIN_URL}}
+
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 jobs:
   test:
     timeout-minutes: 60
