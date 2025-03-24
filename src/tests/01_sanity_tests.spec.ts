@@ -6,13 +6,13 @@ import { envData } from '../fixtures/envData';
 
 test.beforeEach(async ({ page }) => {
   
-  await await page.goto(envData.loginPageUrl);
+  await page.goto(envData.baseUrl);
 });
 
 test('should log in and log out', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.signIn();
-    await loginPage.assertUserSignedIn();
+    await loginPage.assertUserSignedIn(page);
     await loginPage.signOut();
-    await loginPage.assertUserSignedOut();
+    await loginPage.assertUserSignedOut(page);
 });

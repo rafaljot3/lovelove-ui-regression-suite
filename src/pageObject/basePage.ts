@@ -8,6 +8,7 @@ export class BasePage {
   readonly welcomeBanner: Locator;
   readonly buttonCookiesNo: Locator;
   readonly optionLogOut: Locator;
+  readonly buttonAddYourBusiness: Locator;
   
   constructor(page: Page) {
     this.page = page;
@@ -16,6 +17,7 @@ export class BasePage {
     this.optionLogOut = page.locator('//a[contains(text(), "Wyloguj się")]');
     this.welcomeBanner = page.getByRole('heading', { name: 'Witaj w Love Love' });
     this.buttonCookiesNo = page.locator("//button[text()='Nie, dziękuję']");
+    this.buttonAddYourBusiness = page.getByRole('link', { name: 'Dodaj swój biznes' });
   }
 
   async navigateToLoginPage(): Promise<void> {
