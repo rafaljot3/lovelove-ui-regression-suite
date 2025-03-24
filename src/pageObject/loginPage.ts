@@ -3,7 +3,7 @@ import { BasePage } from "./basePage";
 import { userData } from "../fixtures/userData"
 
 export class LoginPage extends BasePage {
-  
+  readonly page: Page;
   readonly inputPassword: Locator;
   readonly inputUserLogin: Locator;
   readonly buttonLoginIn: Locator;
@@ -11,6 +11,7 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
+    this.page = page;
     this.inputUserLogin = page.getByRole('textbox', { name: 'Wpisz adres e-mail' })
     this.inputPassword = page.locator("[name='password']")
     this.buttonLoginIn = page.locator("//button[text()='Zaloguj się']")
@@ -37,11 +38,15 @@ export class LoginPage extends BasePage {
     await this.optionLogOut.click();
   }
 
-  async assertUserSignedIn(): Promise<void> {
-    //nie ma za bardzo o co się zaczepić, przydałoby się może coś w rodzaju "hej, Rafał" w którymś miejscu po zalogowaniu
+  async assertUserSignedIn(page: Page): Promise<void> {
+    await expect.poll(async () => {
+      return await page.evaluate(() => localStorage.getItem('authDetails'));
+  }).not.toBeNull();
   }
   
-  async assertUserSignedOut(): Promise<void> {
-    //tu podobnie, gdyby było gdzieś coś w stylu "użytkownik wylogowany" to można by było fajnie potwierdzić, że się udało wylogować
+  async assertUserSignedOut(page: Page): Promise<void> {
+    await expect.poll(async () => {
+      return await page.evaluate(() => localStorage.getItem('authDetails'));
+  }).toBeNull();
   }
 }
