@@ -25,7 +25,6 @@ export class LoginPage extends BasePage {
     await this.buttonLoginIn.click();
   }
 
-
   async signOut(): Promise<void> {
     await this.iconHamburgerMenu.waitFor({ state: 'visible' });
     await this.iconHamburgerMenu.click();

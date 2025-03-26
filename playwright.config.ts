@@ -17,8 +17,9 @@ export default defineConfig({
   
   use: {
 
-    trace: 'on-first-retry',
+    trace: 'on',
   },
+  testMatch: ["**/*.spec.ts"],
   projects: [
     {
       name: 'chromium',

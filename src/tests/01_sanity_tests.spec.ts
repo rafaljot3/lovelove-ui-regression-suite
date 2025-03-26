@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pageObject/loginPage';
+import { LoginPage } from '../page-object/loginPage';
 import { envData } from '../fixtures/envData';
 
 //test.use({ storageState: { cookies: [], origins: [] } });

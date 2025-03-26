@@ -1,8 +1,9 @@
 {
   "name": "lovelove-ui-regression-suite",
   "version": "1.0.0",
-  "description": "",
+  "description": "LoveLove UI Regression Suite",
   "main": "index.js",
+  "type": "module",
   "scripts": {},
   "keywords": [],
   "author": "",
@@ -12,6 +13,11 @@
     "@types/node": "^22.13.11"
   },
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "csv-parse": "^5.6.0",
+    "dotenv": "^16.4.7",
+    "fs": "^0.0.1-security",
+    "lighthouse": "^12.4.0",
+    "path": "^0.12.7",
+    "x2js": "^3.4.4"
   }
 }
