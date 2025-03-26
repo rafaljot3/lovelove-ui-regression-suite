@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-import { BasePage } from "../pageObject/basePage";
-import { LoginPage } from "../pageObject/loginPage";
+import { BasePage } from "../page-object/basePage";
+import { LoginPage } from "../page-object/loginPage";
 import { envData } from '../fixtures/envData';
 
 test.describe("Create vendor account tests", () => {
