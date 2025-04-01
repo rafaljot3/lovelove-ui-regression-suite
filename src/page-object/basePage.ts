@@ -6,7 +6,7 @@ export class BasePage {
   readonly iconHamburgerMenu: Locator;
   readonly optionLogIn: Locator;
   readonly welcomeBanner: Locator;
-  readonly buttonCookiesNo: Locator;
+  readonly buttonAcceptCookies: Locator;
   readonly optionLogOut: Locator;
   readonly buttonAddYourBusiness: Locator;
   
@@ -16,12 +16,12 @@ export class BasePage {
     this.optionLogIn = page.locator('//a[contains(text(), "Zaloguj się")]');
     this.optionLogOut = page.locator('//a[contains(text(), "Wyloguj się")]');
     this.welcomeBanner = page.getByRole('heading', { name: 'Witaj w Love Love' });
-    this.buttonCookiesNo = page.locator("//button[text()='Nie, dziękuję']");
+    this.buttonAcceptCookies = page.getByRole('button', { name: 'Akceptuję ciasteczka' });
     this.buttonAddYourBusiness = page.getByRole('link', { name: 'Dodaj swój biznes' });
   }
 
   async navigateToLoginPage(): Promise<void> {
-    await this.buttonCookiesNo.click();
+    await this.buttonAcceptCookies.click();
     await this.iconHamburgerMenu.click();
     await this.optionLogIn.waitFor({ state: 'visible' });
     await this.optionLogIn.click();
