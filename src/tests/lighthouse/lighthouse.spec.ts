@@ -14,7 +14,7 @@ test.describe("Performance audit - Playwright + Lighthouse", () => {
   });
 
   for (const url of urls) {
-    test.skip(`Should run Lighthouse audit on page - ${url[0]}`, { tag: "@lighthouse" }, async ({ page }) => {
+    test(`Should run Lighthouse audit on page - ${url[0]}`, { tag: "@lighthouse" }, async ({ page }) => {
       const path = extractLastPartOfUrl(url);
       await page.goto(url[0]);
       await generateLighthouseReport(url[0], `lhreport-${path}.html`);

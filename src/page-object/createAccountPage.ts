@@ -7,7 +7,7 @@ export class CreateAccountPage extends BasePage {
   //common elements
   readonly page: Page;
   readonly buttonCreateAccount: Locator;
-  readonly buttonNext: Locator;
+  
   readonly inputNumberFrom: Locator;
   readonly inputNumberTo: Locator;
   readonly buttonGenericQuestionAnswerYes: Locator;
@@ -95,7 +95,6 @@ export class CreateAccountPage extends BasePage {
     //common elements
     this.page = page;
     this.buttonCreateAccount = page.getByRole('button', { name: 'Rozpocznij przygodę z Love' })
-    this.buttonNext = page.locator("//button[text()='Dalej']");
     this.inputNumberFrom = page.getByRole('spinbutton').first();
     this.inputNumberTo = page.getByRole('spinbutton').nth(1);
     this.buttonGenericQuestionAnswerYes = page.getByRole('button', { name: 'Tak' });
@@ -105,7 +104,6 @@ export class CreateAccountPage extends BasePage {
     this.buttonConfirmDelete = page.getByRole('dialog').getByRole('button', { name: 'Usuń' });
 
     //choose your services 
-    this.buttonNext = page.locator("//button[text()='Dalej']");
     this.headerDescribeYourServices = page.getByRole('heading', { name: 'Określ swoje usługi' });
     this.buttonWeddingVenues = page.getByRole('button', { name: 'Miejsca na wesele' });
 
@@ -160,7 +158,7 @@ export class CreateAccountPage extends BasePage {
     this.buttonAddLocation = page.getByRole('button', { name: 'Dodaj' });
 
     //reviews
-    this.checkboxImportReviews = page.getByRole('checkbox');
+    this.checkboxImportReviews = page.locator('//label[contains(text(), "Chcę zaimportować opinie mojego biznesu z Google")]/preceding::input[1]');
 
     //social media
     this.inputFacebookLink = page.getByRole('textbox', { name: 'facebook.com/twoj-profil' });
@@ -179,7 +177,7 @@ export class CreateAccountPage extends BasePage {
     await this.buttonAddYourBusiness.click();
     await this.buttonCreateAccount.click();
     await this.buttonWeddingVenues.click();
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
     await expect(this.buttonBanquetHall).toBeVisible();
   }
 
@@ -189,14 +187,14 @@ export class CreateAccountPage extends BasePage {
     await this.inputNumberFrom.fill(numberOfGuestsFrom);
     await this.inputNumberTo.fill(numberOfGuestsTo);
     await this.buttonMountainLocation.click();
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
     await expect(this.buttonDecorations).toBeVisible();
   }
 
   async addVenueAmenities(): Promise<void> {
     await this.buttonDecorations.click();
     await this.buttonGenericQuestionAnswerYes.click();
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
   }
 
   async addTableArragements(numberOfSeatsFrom: string, numberOfSeatsTo: string): Promise<void> {
@@ -206,7 +204,7 @@ export class CreateAccountPage extends BasePage {
     await this.inputNumberFrom.fill(numberOfSeatsFrom);
     await this.inputNumberTo.fill(numberOfSeatsTo);
     await this.buttonSeatsInside.click();
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
   }
 
   async addFoodOptions(): Promise<void> {
@@ -215,7 +213,7 @@ export class CreateAccountPage extends BasePage {
     await this.buttonWayOfServing.click();
     await this.buttonGenericQuestionAnswerYes.nth(1).click();
     await this.buttonGenericQuestionAnswerYes.nth(2).click();
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
   }
 
   async addBeverageOptions(): Promise<void> {
@@ -223,7 +221,7 @@ export class CreateAccountPage extends BasePage {
     await this.buttonWarmBeveragesCoffee.click();
     await this.buttonAlcoFreeJuice.click();
     await this.buttonAlcoWine.click();
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
   }
 
   async addAccommodation(numberOfAccommodations: string): Promise<void> {
@@ -231,7 +229,7 @@ export class CreateAccountPage extends BasePage {
     await this.inputNumberOfAccomodations.clear();
     await this.inputNumberOfAccomodations.fill(numberOfAccommodations);
     await this.buttonGenericQuestionAnswerYes.click();
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
   }
 
   async fillDescriptionForm(name: string, slogan: string, description: string): Promise<void> {
@@ -241,7 +239,7 @@ export class CreateAccountPage extends BasePage {
     await this.inputSlogan.fill(slogan);
     await this.inputVendorDescription.clear();
     await this.inputVendorDescription.fill(description);
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
   }
 
   async fillPackageForm(packageName: string, price: string, description: string): Promise<void> {
@@ -253,7 +251,7 @@ export class CreateAccountPage extends BasePage {
     await this.inputPackageDescription.fill(description);
     await this.buttonPackageContentPlate.click();
     await sleep(2000);
-    await this.buttonNext.click();
+    await this.navigateToNextStep();
 
   }
 
@@ -263,7 +261,7 @@ export class CreateAccountPage extends BasePage {
       './src/fixtures/data/photos/test_photo_2.jpg',
       './src/fixtures/data/photos/test_photo_3.jpg',
       './src/fixtures/data/photos/test_photo_4.jpg',
-      './src/fixtures/data/photos/test_photo_5.jpg'
+      './src/fixtures/data/photos/test_photo_5.jpeg'
   ];
   await this.page.setInputFiles('input[type="file"]', filePaths);
   await this.buttonNext.click();
@@ -272,7 +270,7 @@ export class CreateAccountPage extends BasePage {
   async addVideoLinks(link: string): Promise<void> {
   await this.inputVideoLink.clear();
   await this.inputVideoLink.fill(link);  
-  await this.buttonNext.click();
+  await this.navigateToNextStep();
   } 
 
   async setLocation(location: string): Promise<void> {
@@ -280,16 +278,17 @@ export class CreateAccountPage extends BasePage {
   await this.inputLocation.fill(location);  
   await this.optionLocation.click();  
   await this.buttonAddLocation.click();  
-  await this.buttonNext.click();
+  await this.navigateToNextStep();
   }
   
-  async setContactDetails(): Promise<void> {  
-  await this.buttonNext.click(); //TODO: will be enhanced
+  async setContactDetails(): Promise<void> {
+  await this.page.waitForSelector('h2', { state: 'visible' });   
+  await this.navigateToNextStep(); //TODO: will be enhanced
   }
 
   async importReviews(): Promise<void> {  
   await this.checkboxImportReviews.click();  
-  await this.buttonNext.click(); //TODO: will be enhanced
+  await this.navigateToNextStep(); //TODO: will be enhanced
   }
 
   async addSocialMediaLinks(facebookLink: string, instaLink: string, tiktokLink: string, webPageLink: string): Promise<void> {  
@@ -301,7 +300,7 @@ export class CreateAccountPage extends BasePage {
   await links[1].fill(instaLink);
   await links[2].fill(tiktokLink);
   await links[3].fill(webPageLink);
-  await this.buttonNext.click();
+  await this.navigateToNextStep();
   }
 
   async attachFiles(): Promise<void> {
@@ -311,7 +310,7 @@ export class CreateAccountPage extends BasePage {
       './src/fixtures/data/files/test_file_3.pdf',
   ];
   await this.page.setInputFiles('input[type="file"]', filePaths);
-  await this.buttonNext.click();
+  await this.navigateToNextStep();
   } 
 
   async checkCommunityCheckboxes(): Promise<void> {  
@@ -319,6 +318,18 @@ export class CreateAccountPage extends BasePage {
     for(let checkbox of checkboxes){
      await checkbox.check();
     } 
-    await this.buttonNext.click();
+  await this.navigateToNextStep();
     }
+
+  async submitProfile(): Promise<void> {  
+  await this.buttonNext.click();
+  await this.buttonSubmit.click();  
+  }
+
+  async deleteProfile(): Promise<void> {  
+  await this.buttonDelete.click();
+  await this.buttonConfirmDelete.click(); 
+  }   
+
+
 }
