@@ -21,6 +21,7 @@ export type CreateAccountForm = {
   packagePrice: string;
   packageDescription: string;
   videoLink: string;
+  contactTitle: string;
   location: string;
   facebookLink: string;
   instaLink: string;

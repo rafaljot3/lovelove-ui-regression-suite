@@ -30,7 +30,7 @@ test.describe("Create vendor account tests", () => {
     await createAccountPage.uploadPhotos();
     await createAccountPage.addVideoLinks(createAccount.videoLink);
     await createAccountPage.setLocation(createAccount.location);
-    await createAccountPage.setContactDetails();
+    await createAccountPage.setContactDetails(createAccount.contactTitle);
     await createAccountPage.importReviews();
     await createAccountPage.addSocialMediaLinks(createAccount.facebookLink, createAccount.instaLink, createAccount.tiktokLink, createAccount.webPageLink);
     await createAccountPage.attachFiles();

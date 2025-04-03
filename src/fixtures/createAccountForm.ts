@@ -11,6 +11,7 @@ export const createAccount: CreateAccountForm = {
   vendorDescription: "that's a loooooong story",
   packageName: "Test Package 1",
   packagePrice: "1000",
+  contactTitle: "Assistant Regional Manager",
   packageDescription: "That's a package used for test automation purposes",
   videoLink: "https://www.youtube.com/watch?v=vyvpaBxztB8",
   location: "Wrocław",

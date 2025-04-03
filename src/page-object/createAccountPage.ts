@@ -73,6 +73,8 @@ export class CreateAccountPage extends BasePage {
   readonly buttonClearLocation: Locator;
   readonly buttonAddLocation: Locator;
 
+  //contact details
+  readonly inputContactTitle: Locator;
   //reviews
   readonly checkboxImportReviews: Locator;
 
@@ -156,6 +158,9 @@ export class CreateAccountPage extends BasePage {
     this.optionLocation = page.getByText('WrocławPolska');
     this.buttonClearLocation = page.getByRole('button', { name: 'Wrocław' }).getByRole('button');
     this.buttonAddLocation = page.getByRole('button', { name: 'Dodaj' });
+
+    //contact details
+    this.inputContactTitle = page.locator('//label[contains(text(), "Tytuł")]/following::input[1]');
 
     //reviews
     this.checkboxImportReviews = page.locator('//label[contains(text(), "Chcę zaimportować opinie mojego biznesu z Google")]/preceding::input[1]');
@@ -280,9 +285,10 @@ export class CreateAccountPage extends BasePage {
   await this.buttonAddLocation.click();  
   await this.navigateToNextStep();
   }
-  
-  async setContactDetails(): Promise<void> {
-  await this.page.waitForSelector('h2', { state: 'visible' });   
+
+  async setContactDetails(title: string): Promise<void> {
+  await this.inputContactTitle.clear()
+  await this.inputContactTitle.fill(title)
   await this.navigateToNextStep(); //TODO: will be enhanced
   }
 
