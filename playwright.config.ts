@@ -5,14 +5,14 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './src/tests',  
-  fullyParallel: true,
+  fullyParallel: false,
   timeout: 60 * 1000,
   expect: {
     timeout: 5000,
   },
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0, 
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   reporter: [["list"], ["junit", { outputFile: "results.xml" }]],
   
   use: {
@@ -27,9 +27,8 @@ export default defineConfig({
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...devices['iPhone 13'] },
     },
-
   ],
 
 });

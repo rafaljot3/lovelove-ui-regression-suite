@@ -2,7 +2,6 @@ import { expect, Locator, Page } from "@playwright/test";
 import { CreateAccountPage } from "./createAccountPage";
 
 export class BasePage {
- 
   readonly page: Page;
   readonly iconHamburgerMenu: Locator;
   readonly optionLogIn: Locator;
@@ -13,17 +12,17 @@ export class BasePage {
   readonly buttonAdjustCookies: Locator;
   readonly buttonSaveCookiesPreferences: Locator;
   readonly buttonNext: Locator;
-  
+
   constructor(page: Page) {
     this.page = page;
     this.iconHamburgerMenu = page.locator('img[alt="menu icon"]');
     this.optionLogIn = page.locator('//a[contains(text(), "Zaloguj się")]');
     this.optionLogOut = page.locator('//a[contains(text(), "Wyloguj się")]');
-    this.welcomeBanner = page.getByRole('heading', { name: 'Witaj w Love Love' });
-    this.buttonAcceptCookies = page.getByRole('button', { name: 'Akceptuję ciasteczka' });
-    this.buttonAdjustCookies = page.getByRole('button', { name: 'Dostosuj' });
-    this.buttonAddYourBusiness = page.getByRole('link', { name: 'Dodaj swój biznes' });
-    this.buttonSaveCookiesPreferences = page.getByRole('button', { name: 'Zapisz preferencje' });
+    this.welcomeBanner = page.getByRole("heading", { name: "Witaj w Love Love" });
+    this.buttonAcceptCookies = page.getByRole("button", { name: "Akceptuję ciasteczka" });
+    this.buttonAdjustCookies = page.getByRole("button", { name: "Dostosuj" });
+    this.buttonAddYourBusiness = page.getByRole("link", { name: "Dodaj swój biznes" });
+    this.buttonSaveCookiesPreferences = page.getByRole("button", { name: "Zapisz preferencje" });
     this.buttonNext = page.locator("//button[text()='Dalej']");
   }
 
@@ -31,15 +30,13 @@ export class BasePage {
     await this.buttonAdjustCookies.click();
     await this.buttonSaveCookiesPreferences.click();
     await this.iconHamburgerMenu.click();
-    await this.optionLogIn.waitFor({ state: 'visible' });
+    await this.optionLogIn.waitFor({ state: "visible" });
     await this.optionLogIn.click();
     await expect(this.welcomeBanner).toBeVisible();
   }
 
   async navigateToNextStep(): Promise<void> {
-    await this.page.waitForSelector('h2', { state: 'visible' });   
+    await this.page.waitForSelector("h2", { state: "visible" });
     await this.buttonNext.click();
   }
-
-
 }
