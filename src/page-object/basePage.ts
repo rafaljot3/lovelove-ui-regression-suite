@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
+import { CreateAccountPage } from "./createAccountPage";
 
 export class BasePage {
  
@@ -9,6 +10,9 @@ export class BasePage {
   readonly buttonAcceptCookies: Locator;
   readonly optionLogOut: Locator;
   readonly buttonAddYourBusiness: Locator;
+  readonly buttonAdjustCookies: Locator;
+  readonly buttonSaveCookiesPreferences: Locator;
+  readonly buttonNext: Locator;
   
   constructor(page: Page) {
     this.page = page;
@@ -17,15 +21,25 @@ export class BasePage {
     this.optionLogOut = page.locator('//a[contains(text(), "Wyloguj się")]');
     this.welcomeBanner = page.getByRole('heading', { name: 'Witaj w Love Love' });
     this.buttonAcceptCookies = page.getByRole('button', { name: 'Akceptuję ciasteczka' });
+    this.buttonAdjustCookies = page.getByRole('button', { name: 'Dostosuj' });
     this.buttonAddYourBusiness = page.getByRole('link', { name: 'Dodaj swój biznes' });
+    this.buttonSaveCookiesPreferences = page.getByRole('button', { name: 'Zapisz preferencje' });
+    this.buttonNext = page.locator("//button[text()='Dalej']");
   }
 
   async navigateToLoginPage(): Promise<void> {
-    await this.buttonAcceptCookies.click();
+    await this.buttonAdjustCookies.click();
+    await this.buttonSaveCookiesPreferences.click();
     await this.iconHamburgerMenu.click();
     await this.optionLogIn.waitFor({ state: 'visible' });
     await this.optionLogIn.click();
     await expect(this.welcomeBanner).toBeVisible();
   }
+
+  async navigateToNextStep(): Promise<void> {
+    await this.page.waitForSelector('h2', { state: 'visible' });   
+    await this.buttonNext.click();
+  }
+
 
 }

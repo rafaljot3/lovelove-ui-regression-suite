@@ -35,10 +35,8 @@ test.describe("Create vendor account tests", () => {
     await createAccountPage.addSocialMediaLinks(createAccount.facebookLink, createAccount.instaLink, createAccount.tiktokLink, createAccount.webPageLink);
     await createAccountPage.attachFiles();
     await createAccountPage.checkCommunityCheckboxes();
-    await createAccountPage.buttonNext.click();
-    await createAccountPage.buttonSubmit.click();
-    await createAccountPage.buttonDelete.click();
-    await createAccountPage.buttonConfirmDelete.click();
+    await createAccountPage.submitProfile();
+    await createAccountPage.deleteProfile();
   });    
   });
  
