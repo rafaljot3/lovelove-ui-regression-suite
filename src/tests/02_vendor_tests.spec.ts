@@ -1,11 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-import { BasePage } from "../page-object/basePage";
 import { LoginPage } from "../page-object/loginPage";
-import { envData } from '../fixtures/envData';
+import { envData } from "../fixtures/envData";
 import { CreateAccountPage } from "../page-object/createAccountPage";
-import { sleep } from "../helpers/sleep";
 import { createAccount } from "../fixtures/createAccountForm";
+import { ProfilePreviewPage } from "../page-object/profilePreviewPage";
 
 test.describe("Create vendor account tests", () => {
   test.beforeEach("should log in a user", async ({ page }) => {
@@ -18,6 +17,7 @@ test.describe("Create vendor account tests", () => {
 
   test("should create and remove a wedding venue vendor user account", async ({ page }) => {
     const createAccountPage = new CreateAccountPage(page);
+    const profilePreviewPage = new ProfilePreviewPage(page);
     await createAccountPage.chooseServices();
     await createAccountPage.configureVenueType(createAccount.numberOfWeddingGuestsFrom, createAccount.numberOfWeddingGuestsTo);
     await createAccountPage.addVenueAmenities();
@@ -32,11 +32,16 @@ test.describe("Create vendor account tests", () => {
     await createAccountPage.setLocation(createAccount.location);
     await createAccountPage.setContactDetails(createAccount.contactTitle);
     await createAccountPage.importReviews();
-    await createAccountPage.addSocialMediaLinks(createAccount.facebookLink, createAccount.instaLink, createAccount.tiktokLink, createAccount.webPageLink);
+    await createAccountPage.addSocialMediaLinks(
+      createAccount.facebookLink,
+      createAccount.instaLink,
+      createAccount.tiktokLink,
+      createAccount.webPageLink,
+    );
     await createAccountPage.attachFiles();
     await createAccountPage.checkCommunityCheckboxes();
+    await profilePreviewPage.assertProfilePreviewContentIsCorrect();
     await createAccountPage.submitProfile();
     await createAccountPage.deleteProfile();
-  });    
   });
- 
+});
