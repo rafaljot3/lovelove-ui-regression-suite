@@ -1,6 +1,7 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "./basePage";
 import { createAccount } from "../fixtures/createAccountForm";
+import { envData } from "../fixtures/envData";
 
 export class ProfilePreviewPage extends BasePage {
   readonly page: Page;
@@ -16,11 +17,13 @@ export class ProfilePreviewPage extends BasePage {
 
   async assertProfilePreviewContentIsCorrect(): Promise<void> {
     await expect(this.headerProfileName).toHaveText(createAccount.vendorName);
+    const assetUrlPattern = new RegExp(
+      `^https://${envData.assetsDomain}/[a-z0-9]+/photos/processed/medium/[a-f0-9-]+\\.(jpeg|jpg)$`
+    );
+
     for (const img of this.imageTestPhotos) {
       const imageUrl = await img.getAttribute("src");
-      expect(imageUrl).toMatch(
-        /^https:\/\/lovelove-assets\.s3\.eu-central-1\.amazonaws\.com\/[a-z0-9]+\/photos\/processed\/medium\/[a-f0-9-]+\.(jpeg|jpg)$/,
-      );
+      expect(imageUrl).toMatch(assetUrlPattern);
     }
   }
 }
