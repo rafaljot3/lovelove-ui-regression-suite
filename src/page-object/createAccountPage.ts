@@ -1,6 +1,7 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "./basePage";
 import { sleep } from "../helpers/sleep";
+import { envData } from "../fixtures/envData";
 
 export class CreateAccountPage extends BasePage {
   //common elements
@@ -340,7 +341,32 @@ export class CreateAccountPage extends BasePage {
   }
 
   async deleteProfile(): Promise<void> {
-    await this.buttonDelete.click();
-    await this.buttonConfirmDelete.click();
+    const authDetailsJson = await this.page.evaluate(() => {
+      return localStorage.getItem("authDetails");
+    });
+
+    if (!authDetailsJson) {
+      throw new Error("No authDetails found in localStorage");
+    }
+
+    const authDetails = JSON.parse(authDetailsJson);
+    const accessToken = authDetails.accessToken;
+
+    if (!accessToken) {
+      throw new Error("Access token not found in authDetails");
+    }
+
+    const response = await this.page.request.delete(`${envData.apiBaseUrl}/onboarding/`, {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status() !== 200 && response.status() !== 204) {
+      throw new Error(`Failed to delete profile. Status code: ${response.status()}`);
+    }
+
+    console.log("Profile successfully deleted");
   }
 }
