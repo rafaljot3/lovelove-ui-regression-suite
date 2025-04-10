@@ -7,6 +7,7 @@ export type EnvironmentData = {
   baseUrl: string;
   loginPageUrl: string;
   assetsDomain: string;
+  apiBaseUrl: string;
 };
 
 export type CreateAccountForm = {

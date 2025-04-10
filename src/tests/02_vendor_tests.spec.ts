@@ -18,6 +18,7 @@ test.describe("Create vendor account tests", () => {
   test("should create and remove a wedding venue vendor user account", async ({ page }) => {
     const createAccountPage = new CreateAccountPage(page);
     const profilePreviewPage = new ProfilePreviewPage(page);
+    await createAccountPage.deleteProfile();
     await createAccountPage.chooseServices();
     await createAccountPage.configureVenueType(createAccount.numberOfWeddingGuestsFrom, createAccount.numberOfWeddingGuestsTo);
     await createAccountPage.addVenueAmenities();
