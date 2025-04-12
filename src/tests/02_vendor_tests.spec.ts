@@ -19,7 +19,13 @@ test.describe("Create vendor account tests", () => {
     const createAccountPage = new CreateAccountPage(page);
     const profilePreviewPage = new ProfilePreviewPage(page);
     await createAccountPage.chooseServices();
-    await createAccountPage.configureVenueType(createAccount.numberOfWeddingGuestsFrom, createAccount.numberOfWeddingGuestsTo);
+    await createAccountPage.configureVenueType(
+      "Sala bankietowa",
+      "Uniwersalny",
+      "W górach",
+      createAccount.numberOfWeddingGuestsFrom,
+      createAccount.numberOfWeddingGuestsTo,
+    );
     await createAccountPage.addVenueAmenities();
     await createAccountPage.addTableArragements(createAccount.numberOfTableSeatsFrom, createAccount.numberOfTableSeatsTo);
     await createAccountPage.addFoodOptions();
@@ -40,7 +46,9 @@ test.describe("Create vendor account tests", () => {
     );
     await createAccountPage.attachFiles();
     await createAccountPage.checkCommunityCheckboxes();
-    await profilePreviewPage.assertProfilePreviewContentIsCorrect();
+    await profilePreviewPage.assertWeddingVenueConfiguredCorrectly();
+    await profilePreviewPage.assertVendorParametersCorrect();
+    await profilePreviewPage.assertCommunityParametersCorrect();
     await createAccountPage.submitProfile();
     await createAccountPage.deleteProfile();
   });

@@ -184,6 +184,9 @@ export class CreateAccountPage extends BasePage {
       '//label[contains(text(), "Zwierzaczki mile widziane")]/parent::div/preceding-sibling::div//input[@type="checkbox"]',
     );
   }
+  async setWeddingVendorParameters(name: string) {
+    await this.page.getByRole("button", { name }).click();
+  }
 
   async chooseServices(): Promise<void> {
     await this.buttonAddYourBusiness.click();
@@ -193,12 +196,18 @@ export class CreateAccountPage extends BasePage {
     await expect(this.buttonBanquetHall).toBeVisible();
   }
 
-  async configureVenueType(numberOfGuestsFrom: string, numberOfGuestsTo: string): Promise<void> {
-    await this.buttonBanquetHall.click();
-    await this.buttonUniversalStyle.click();
+  async configureVenueType(
+    venueType: string,
+    venueStyle: string,
+    locationType: string,
+    numberOfGuestsFrom: string,
+    numberOfGuestsTo: string,
+  ): Promise<void> {
+    await this.setWeddingVendorParameters(venueType);
+    await this.setWeddingVendorParameters(venueStyle);
     await this.inputNumberFrom.fill(numberOfGuestsFrom);
     await this.inputNumberTo.fill(numberOfGuestsTo);
-    await this.buttonMountainLocation.click();
+    await this.setWeddingVendorParameters(locationType);
     await this.navigateToNextStep();
     await expect(this.buttonDecorations).toBeVisible();
   }
