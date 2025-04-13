@@ -1,12 +1,12 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "./basePage";
 import { sleep } from "../helpers/sleep";
+import { envData } from "../fixtures/envData";
 
 export class CreateAccountPage extends BasePage {
   //common elements
   readonly page: Page;
   readonly buttonCreateAccount: Locator;
-
   readonly inputNumberFrom: Locator;
   readonly inputNumberTo: Locator;
   readonly buttonGenericQuestionAnswerYes: Locator;
@@ -14,39 +14,19 @@ export class CreateAccountPage extends BasePage {
   readonly buttonSubmit: Locator;
   readonly buttonDelete: Locator;
   readonly buttonConfirmDelete: Locator;
+  readonly headerProfileNotExisting: Locator;
+  readonly headerCreateProfile: Locator;
+  readonly buttonCreateProfile: Locator;
+  readonly bannerLoveLove: Locator;
 
   //choose your services
   readonly headerDescribeYourServices: Locator;
   readonly buttonWeddingVenues: Locator;
 
-  //wedding venues
-  readonly buttonBanquetHall: Locator;
-  readonly buttonHotel: Locator;
-  readonly buttonRestaurant: Locator;
-  readonly buttonUniversalStyle: Locator;
-  readonly buttonRomanticStyle: Locator;
-  readonly buttonGlamourStyle: Locator;
-  readonly buttonMountainLocation: Locator;
-
-  //venue amenities
-  readonly buttonDecorations: Locator;
-
-  //table arragements
-  readonly buttonRoundTables: Locator;
-  readonly buttonSeatsInside: Locator;
-
-  //food
-  readonly buttonPolishCusine: Locator;
-  readonly buttonWayOfServing: Locator;
-
   //beverages
-  readonly buttonWarmBeveragesCoffee: Locator;
-  readonly buttonAlcoFreeJuice: Locator;
-  readonly buttonAlcoWine: Locator;
   readonly buttonServeBeverages: Locator;
 
   //accommodation
-  readonly buttonAccommodationOnPlace: Locator;
   readonly inputNumberOfAccomodations: Locator;
 
   //description
@@ -101,39 +81,19 @@ export class CreateAccountPage extends BasePage {
     this.buttonSubmit = page.getByRole("button", { name: "Prześlij", exact: true });
     this.buttonDelete = page.getByRole("button", { name: "Usuń" });
     this.buttonConfirmDelete = page.getByRole("dialog").getByRole("button", { name: "Usuń" });
+    this.headerProfileNotExisting = page.locator("//div[@class='text-center py-5']/h4[@class='mb-4']");
+    this.headerCreateProfile = page.locator("//div[@class='text-center py-5']/p[@class='mb-4']");
+    this.buttonCreateProfile = page.getByRole('button', { name: 'Utwórz profil' });
+    this.bannerLoveLove = page.locator("//img[@src='/assets/svg/logo_purple-BuUVvXEs.svg']");
 
     //choose your services
     this.headerDescribeYourServices = page.getByRole("heading", { name: "Określ swoje usługi" });
     this.buttonWeddingVenues = page.getByRole("button", { name: "Miejsca na wesele" });
 
-    //wedding venues
-    this.buttonBanquetHall = page.getByRole("button", { name: "Sala bankietowa" });
-    this.buttonHotel = page.getByRole("button", { name: "Hotel" });
-    this.buttonRestaurant = page.getByRole("button", { name: "Restauracja" });
-    this.buttonUniversalStyle = page.getByRole("button", { name: "Uniwersalny" });
-    this.buttonRomanticStyle = page.getByRole("button", { name: "Romantyczny" });
-    this.buttonGlamourStyle = page.getByRole("button", { name: "Glamour" });
-    this.buttonMountainLocation = page.getByRole("button", { name: "W górach" });
-
-    //venue amenities
-    this.buttonDecorations = page.getByRole("button", { name: "Dekoracje" });
-
-    //table arragements
-    this.buttonRoundTables = page.getByRole("button", { name: "Okrągłe" });
-    this.buttonSeatsInside = page.getByRole("button", { name: "Wewnątrz" });
-
-    //food
-    this.buttonPolishCusine = page.getByRole("button", { name: "Polska" });
-    this.buttonWayOfServing = page.getByRole("button", { name: "Przystawki" });
-
     //beverages
-    this.buttonWarmBeveragesCoffee = page.getByRole("button", { name: "Kawa" });
-    this.buttonAlcoFreeJuice = page.getByRole("button", { name: "Soki" });
-    this.buttonAlcoWine = page.getByRole("button", { name: "Wino" });
     this.buttonServeBeverages = page.locator('//h3[contains(text(), "Czy zapewniacie napoje?")]/following::button[1]');
 
     //accommodation
-    this.buttonAccommodationOnPlace = page.getByRole("button", { name: "Na Miejscu" });
     this.inputNumberOfAccomodations = page.getByPlaceholder("Noclegi na miejscu");
 
     //description
@@ -193,7 +153,6 @@ export class CreateAccountPage extends BasePage {
     await this.buttonCreateAccount.click();
     await this.buttonWeddingVenues.click();
     await this.navigateToNextStep();
-    await expect(this.buttonBanquetHall).toBeVisible();
   }
 
   async configureVenueType(
@@ -209,44 +168,43 @@ export class CreateAccountPage extends BasePage {
     await this.inputNumberTo.fill(numberOfGuestsTo);
     await this.setWeddingVendorParameters(locationType);
     await this.navigateToNextStep();
-    await expect(this.buttonDecorations).toBeVisible();
   }
 
-  async addVenueAmenities(): Promise<void> {
-    await this.buttonDecorations.click();
+  async addVenueAmenities(amenities: string): Promise<void> {
+    await this.setWeddingVendorParameters(amenities);
     await this.buttonGenericQuestionAnswerYes.click();
     await this.navigateToNextStep();
   }
 
-  async addTableArragements(numberOfSeatsFrom: string, numberOfSeatsTo: string): Promise<void> {
-    await this.buttonRoundTables.click();
+  async addTableArragements(tables: string, numberOfSeatsFrom: string, numberOfSeatsTo: string, seats: string): Promise<void> {
+    await this.setWeddingVendorParameters(tables);
     await this.inputNumberFrom.clear();
     await this.inputNumberTo.clear();
     await this.inputNumberFrom.fill(numberOfSeatsFrom);
     await this.inputNumberTo.fill(numberOfSeatsTo);
-    await this.buttonSeatsInside.click();
+    await this.setWeddingVendorParameters(seats);
     await this.navigateToNextStep();
   }
 
-  async addFoodOptions(): Promise<void> {
+  async addFoodOptions(cusine: string, serving: string): Promise<void> {
     await this.buttonGenericQuestionAnswerYes.first().click();
-    await this.buttonPolishCusine.click();
-    await this.buttonWayOfServing.click();
+    await this.setWeddingVendorParameters(cusine);
+    await this.setWeddingVendorParameters(serving);
     await this.buttonGenericQuestionAnswerYes.nth(1).click();
     await this.buttonGenericQuestionAnswerYes.nth(2).click();
     await this.navigateToNextStep();
   }
 
-  async addBeverageOptions(): Promise<void> {
+  async addBeverageOptions(warm: string, alcofree: string, alcohol: string): Promise<void> {
     await this.buttonServeBeverages.click();
-    await this.buttonWarmBeveragesCoffee.click();
-    await this.buttonAlcoFreeJuice.click();
-    await this.buttonAlcoWine.click();
+    await this.setWeddingVendorParameters(warm);
+    await this.setWeddingVendorParameters(alcofree);
+    await this.setWeddingVendorParameters(alcohol);
     await this.navigateToNextStep();
   }
 
-  async addAccommodation(numberOfAccommodations: string): Promise<void> {
-    await this.buttonAccommodationOnPlace.click();
+  async addAccommodation(accommodationPlace: string, numberOfAccommodations: string): Promise<void> {
+    await this.setWeddingVendorParameters(accommodationPlace);
     await this.inputNumberOfAccomodations.clear();
     await this.inputNumberOfAccomodations.fill(numberOfAccommodations);
     await this.buttonGenericQuestionAnswerYes.click();
@@ -349,7 +307,42 @@ export class CreateAccountPage extends BasePage {
   }
 
   async deleteProfile(): Promise<void> {
-    await this.buttonDelete.click();
-    await this.buttonConfirmDelete.click();
+    const authDetailsJson = await this.page.evaluate(() => {
+      return localStorage.getItem("authDetails");
+    });
+
+    if (!authDetailsJson) {
+      throw new Error("No authDetails found in localStorage");
+    }
+
+    const authDetails = JSON.parse(authDetailsJson);
+    const accessToken = authDetails.accessToken;
+
+    if (!accessToken) {
+      throw new Error("Access token not found in authDetails");
+    }
+
+    const response = await this.page.request.delete(`${envData.apiBaseUrl}/onboarding/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.status() !== 200 && response.status() !== 204) {
+      throw new Error(`Failed to delete profile. Status code: ${response.status()}`);
+    }
+
+    console.log("Profile successfully deleted");
+  }
+
+  async assertProfileDeleted(): Promise<void> {
+    await this.bannerLoveLove.click();
+    await this.iconHamburgerMenu.click();
+    await this.optionSettings.click();
+    await this.tabBusinessProfile.click();
+    await expect(this.headerProfileNotExisting).toContainText("Nie znaleziono profilu biznesowego");
+    await expect(this.headerCreateProfile).toContainText("Wygląda na to, że nie masz jeszcze utworzonego profilu biznesowego. Utwórz profil, aby rozpocząć swoją przygodę z Love Love.");
+    await expect(this.buttonCreateProfile).toBeVisible();
   }
 }

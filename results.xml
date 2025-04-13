@@ -1,6 +1,0 @@
-<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="0" time="6.827335999999999">
-<testsuite name="01_sanity_tests.spec.ts" timestamp="2025-03-23T13:45:48.940Z" hostname="chromium" tests="1" failures="0" skipped="0" time="5.253" errors="0">
-<testcase name="should log in and log out" classname="01_sanity_tests.spec.ts" time="5.253">
-</testcase>
-</testsuite>
-</testsuites>

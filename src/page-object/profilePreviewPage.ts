@@ -1,6 +1,7 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "./basePage";
 import { createAccount } from "../fixtures/createAccountForm";
+import { envData } from "../fixtures/envData";
 
 export class ProfilePreviewPage extends BasePage {
   readonly page: Page;
@@ -20,6 +21,10 @@ export class ProfilePreviewPage extends BasePage {
   readonly fieldCommunityDisabledPeople: Locator;
   readonly fieldCommunityPets: Locator;
   readonly videoPlayer: Locator;
+  readonly fieldPricing: Locator;
+  readonly sectionLocation: Locator;
+  readonly sectionLinks: Locator;
+  readonly sectionFiles: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -52,6 +57,10 @@ export class ProfilePreviewPage extends BasePage {
       .filter({ hasText: /^Czworonogi mile widziane$/ })
       .first();
     this.videoPlayer = page.locator("#video-player-0");
+    this.fieldPricing = page.locator("div.pricing-item");
+    this.sectionLocation = page.locator("#location");
+    this.sectionLinks = page.locator("#links");
+    this.sectionFiles = page.locator("#files");
   }
 
   async assertWeddingVenueConfiguredCorrectly(): Promise<void> {
@@ -68,7 +77,7 @@ export class ProfilePreviewPage extends BasePage {
       "jasna sprawa",
     ];
     const cateringPhrasesPattern = new RegExp(cateringPhrases.join("|"), "i");
-    await this.fieldNumberOfGuests.waitFor({ state: 'visible', timeout: 30000 });
+    await this.fieldNumberOfGuests.waitFor({ state: "visible", timeout: 30000 });
     await expect(this.fieldNumberOfGuests).toHaveText(
       createAccount.numberOfWeddingGuestsFrom + " - " + createAccount.numberOfWeddingGuestsTo,
     );
@@ -81,11 +90,11 @@ export class ProfilePreviewPage extends BasePage {
   }
   async assertVendorParametersCorrect(): Promise<void> {
     await expect(this.headerProfileName).toHaveText(createAccount.vendorName);
+    const assetUrlPattern = new RegExp(`^https://${envData.assetsDomain}/[a-z0-9]+/photos/processed/medium/[a-f0-9-]+\\.(jpeg|jpg)$`);
+
     for (const img of this.imageTestPhotos) {
       const imageUrl = await img.getAttribute("src");
-      expect(imageUrl).toMatch(
-        /^https:\/\/lovelove-assets\.s3\.eu-central-1\.amazonaws\.com\/[a-z0-9]+\/photos\/processed\/medium\/[a-f0-9-]+\.(jpeg|jpg)$/,
-      );
+      expect(imageUrl).toMatch(assetUrlPattern);
     }
     await expect(this.fieldSlogan).toHaveText(createAccount.slogan);
     await expect(this.fieldVendorDescription).toHaveText(createAccount.vendorDescription);
@@ -96,5 +105,32 @@ export class ProfilePreviewPage extends BasePage {
     await expect(this.fieldCommunityEcoFriendly).toBeVisible();
     await expect(this.fieldCommunityDisabledPeople).toBeVisible();
     await expect(this.fieldCommunityPets).toBeVisible();
+  }
+  async assertPricingCorrect(): Promise<void> {
+    await expect(this.fieldPricing).toBeVisible();
+    await expect(this.fieldPricing).toContainText(createAccount.packageName);
+    await expect(this.fieldPricing).toContainText(createAccount.packagePrice);
+    await expect(this.fieldPricing).toContainText(createAccount.packageDescription);
+    await expect(this.fieldPricing).toContainText("Talerzyk");
+  }
+  async assertLocationCorrect(): Promise<void> {
+    const nearestTowns = ["Opole", "Wałbrzych", "Legnica", "Lubin", "Ostrów Wielkopolski", "Leszno", "Świdnica", "Nysa", "Brzeg"];
+    await expect(this.sectionLocation).toBeVisible();
+    await expect(this.sectionLocation).toContainText(createAccount.location);
+    for (let towns of nearestTowns) {
+      await expect(this.sectionLocation).toContainText(towns);
+    }
+  }
+  async assertLinksCorrect(): Promise<void> {
+    const links = [createAccount.webPageLink, createAccount.instaLink, createAccount.tiktokLink, createAccount.tiktokLink];
+    for (let link of links) {
+      await expect(this.sectionLinks.locator('a[href="' + link + '"]')).toBeVisible();
+    }
+  }
+  async assertFilesCorrect(): Promise<void> {
+    for (let i = 1; i <= 3; i++) {
+      const linkText = `Test file ${i}`;
+      await expect(this.sectionFiles).toContainText(linkText);
+    }
   }
 }

@@ -18,6 +18,7 @@ test.describe("Create vendor account tests", () => {
   test("should create and remove a wedding venue vendor user account", async ({ page }) => {
     const createAccountPage = new CreateAccountPage(page);
     const profilePreviewPage = new ProfilePreviewPage(page);
+    await createAccountPage.deleteProfile();
     await createAccountPage.chooseServices();
     await createAccountPage.configureVenueType(
       "Sala bankietowa",
@@ -26,11 +27,11 @@ test.describe("Create vendor account tests", () => {
       createAccount.numberOfWeddingGuestsFrom,
       createAccount.numberOfWeddingGuestsTo,
     );
-    await createAccountPage.addVenueAmenities();
-    await createAccountPage.addTableArragements(createAccount.numberOfTableSeatsFrom, createAccount.numberOfTableSeatsTo);
-    await createAccountPage.addFoodOptions();
-    await createAccountPage.addBeverageOptions();
-    await createAccountPage.addAccommodation(createAccount.numberOfAccommodations);
+    await createAccountPage.addVenueAmenities("Dekoracje");
+    await createAccountPage.addTableArragements("Okrągłe", createAccount.numberOfTableSeatsFrom, createAccount.numberOfTableSeatsTo, "Wewnątrz");
+    await createAccountPage.addFoodOptions("Polska", "Przystawki");
+    await createAccountPage.addBeverageOptions("Kawa", "Soki", "Wino");
+    await createAccountPage.addAccommodation("Na miejscu", createAccount.numberOfAccommodations);
     await createAccountPage.fillDescriptionForm(createAccount.vendorName, createAccount.slogan, createAccount.vendorDescription);
     await createAccountPage.fillPackageForm(createAccount.packageName, createAccount.packagePrice, createAccount.packageDescription);
     await createAccountPage.uploadPhotos();
@@ -49,7 +50,12 @@ test.describe("Create vendor account tests", () => {
     await profilePreviewPage.assertWeddingVenueConfiguredCorrectly();
     await profilePreviewPage.assertVendorParametersCorrect();
     await profilePreviewPage.assertCommunityParametersCorrect();
+    await profilePreviewPage.assertPricingCorrect();
+    await profilePreviewPage.assertLocationCorrect();
+    await profilePreviewPage.assertLinksCorrect();
+    await profilePreviewPage.assertFilesCorrect();
     await createAccountPage.submitProfile();
     await createAccountPage.deleteProfile();
+    await createAccountPage.assertProfileDeleted();
   });
 });
