@@ -20,12 +20,18 @@ test.describe("Create vendor account tests", () => {
     const profilePreviewPage = new ProfilePreviewPage(page);
     await createAccountPage.deleteProfile();
     await createAccountPage.chooseServices();
-    await createAccountPage.configureVenueType(createAccount.numberOfWeddingGuestsFrom, createAccount.numberOfWeddingGuestsTo);
-    await createAccountPage.addVenueAmenities();
-    await createAccountPage.addTableArragements(createAccount.numberOfTableSeatsFrom, createAccount.numberOfTableSeatsTo);
-    await createAccountPage.addFoodOptions();
-    await createAccountPage.addBeverageOptions();
-    await createAccountPage.addAccommodation(createAccount.numberOfAccommodations);
+    await createAccountPage.configureVenueType(
+      "Sala bankietowa",
+      "Uniwersalny",
+      "W górach",
+      createAccount.numberOfWeddingGuestsFrom,
+      createAccount.numberOfWeddingGuestsTo,
+    );
+    await createAccountPage.addVenueAmenities("Dekoracje");
+    await createAccountPage.addTableArragements("Okrągłe", createAccount.numberOfTableSeatsFrom, createAccount.numberOfTableSeatsTo, "Wewnątrz");
+    await createAccountPage.addFoodOptions("Polska", "Przystawki");
+    await createAccountPage.addBeverageOptions("Kawa", "Soki", "Wino");
+    await createAccountPage.addAccommodation("Na miejscu", createAccount.numberOfAccommodations);
     await createAccountPage.fillDescriptionForm(createAccount.vendorName, createAccount.slogan, createAccount.vendorDescription);
     await createAccountPage.fillPackageForm(createAccount.packageName, createAccount.packagePrice, createAccount.packageDescription);
     await createAccountPage.uploadPhotos();
@@ -41,8 +47,15 @@ test.describe("Create vendor account tests", () => {
     );
     await createAccountPage.attachFiles();
     await createAccountPage.checkCommunityCheckboxes();
-    await profilePreviewPage.assertProfilePreviewContentIsCorrect();
+    await profilePreviewPage.assertWeddingVenueConfiguredCorrectly();
+    await profilePreviewPage.assertVendorParametersCorrect();
+    await profilePreviewPage.assertCommunityParametersCorrect();
+    await profilePreviewPage.assertPricingCorrect();
+    await profilePreviewPage.assertLocationCorrect();
+    await profilePreviewPage.assertLinksCorrect();
+    await profilePreviewPage.assertFilesCorrect();
     await createAccountPage.submitProfile();
     await createAccountPage.deleteProfile();
+    await createAccountPage.assertProfileDeleted();
   });
 });
