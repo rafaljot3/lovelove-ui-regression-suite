@@ -1,22 +1,33 @@
 name: Playwright Tests
 
 env:
-  USER_PASSWORD: ${{secrets.SECRET_PASSWORD}}
-  USER_LOGIN: ${{secrets.SECRET_LOGIN}}
-  BASE_URL: ${{secrets.BASE_URL}}
-  LOGIN_URL: ${{secrets.LOGIN_URL}}
+  USER_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+  USER_LOGIN: ${{ secrets.SECRET_LOGIN }}
+  BASE_URL: ${{ secrets.BASE_URL }}
+  LOGIN_URL: ${{ secrets.LOGIN_URL }}
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
+    inputs:
+      run_smoke_only:
+        description: 'Run only smoke tests?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
 jobs:
   smoke-test:
     name: Smoke Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.run_smoke_only == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,9 +45,13 @@ jobs:
           name: smoke-playwright-report
           path: playwright-report/
           retention-days: 30
+
   full-test:
-    timeout-minutes: 60
+    name: Full Test Suite
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: smoke-test
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.run_smoke_only == 'false'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -46,11 +61,11 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Run Playwright tests
+      - name: Run All Tests
         run: npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report
+          name: full-playwright-report
           path: playwright-report/
           retention-days: 30
