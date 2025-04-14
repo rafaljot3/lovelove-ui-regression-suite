@@ -19,7 +19,7 @@ test("should log in and log out", async ({ page }) => {
   await loginPage.assertUserSignedOut(page);
 });
 
-  test("should create vendor account - smoke test", async ({ page }) => {
+  test("@smoke should create vendor account", async ({ page }) => {
     const createAccountPage = new CreateAccountPage(page);
     const loginPage = new LoginPage(page);
     await page.goto(envData.baseUrl);
