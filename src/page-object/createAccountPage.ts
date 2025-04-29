@@ -145,7 +145,7 @@ export class CreateAccountPage extends BasePage {
     this.inputPackageName = page.getByRole("textbox", { name: "Nazwa usługi lub pakietu" });
     this.inputPrice = page.getByPlaceholder("Cena w PLN");
     this.inputPackageDescription = page.getByRole("textbox", { name: "Opis usługi lub pakietu" });
-    this.buttonPackageContentPlate = page.getByRole("button", { name: "Talerzyk" });
+    this.buttonPackageContentPlate = page.getByRole("button", { name: "Talerzyk", exact: true });
 
     //video links
     this.inputVideoLink = page.getByRole("textbox", { name: "Link do filmu" });
