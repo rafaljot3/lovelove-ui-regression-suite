@@ -134,7 +134,7 @@ export class CreateAccountPage extends BasePage {
     this.buttonAddNewPackage = page.locator(
       "a.w-100.d-flex.align-items-center.fw-semibold.text-decoration-none.text-black.justify-content-center.font-afacad",
     );
-    this.buttonDeletePackage = page.getByRole("link", { name: "usuń usługę lub pakiet" });
+    this.buttonDeletePackage = page.locator("a.d-flex.fw-semibold.text-black.text-decoration-none.align-items-center.justify-content-center.font-afacad > span").first();
 
     //video links
     this.inputVideoLink = page.getByRole("textbox", { name: "Link do filmu" });
