@@ -26,31 +26,38 @@ test("should log in and log out", async ({ page }) => {
     await loginPage.signIn();
     await loginPage.assertUserSignedIn(page);
     await createAccountPage.deleteProfile();
-    await createAccountPage.chooseServices();
+    await createAccountPage.chooseServices("Miejsca na wesele");
     await createAccountPage.configureVenueType(
       "Sala bankietowa",
       "Uniwersalny",
       "W górach",
-      createAccount.numberOfWeddingGuestsFrom,
-      createAccount.numberOfWeddingGuestsTo,
+      createAccount.weddingPlace.numberOfWeddingGuestsFrom,
+      createAccount.weddingPlace.numberOfWeddingGuestsTo,
     );
     await createAccountPage.addVenueAmenities("Dekoracje");
-    await createAccountPage.addTableArragements("Okrągłe", createAccount.numberOfTableSeatsFrom, createAccount.numberOfTableSeatsTo, "Wewnątrz");
+    await createAccountPage.addTableArragements("Okrągłe", createAccount.weddingPlace.numberOfTableSeatsFrom, createAccount.weddingPlace.numberOfTableSeatsTo, "Wewnątrz");
     await createAccountPage.addFoodOptions("Polska", "Przystawki");
-    await createAccountPage.addBeverageOptions("Kawa", "Soki", "Wino");
-    await createAccountPage.addAccommodation("Na miejscu", createAccount.numberOfAccommodations);
-    await createAccountPage.fillDescriptionForm(createAccount.vendorName, createAccount.slogan, createAccount.vendorDescription);
-    await createAccountPage.fillPackageForm(createAccount.packageName, createAccount.packagePrice, createAccount.packageDescription);
-    await createAccountPage.uploadPhotos();
-    await createAccountPage.addVideoLinks(createAccount.videoLink);
-    await createAccountPage.setLocation(createAccount.location);
-    await createAccountPage.setContactDetails(createAccount.contactTitle);
+    await createAccountPage.addBeverageOptions(["Kawa", "Soki", "Wino"]);
+    await createAccountPage.addAccommodation("Na miejscu", createAccount.weddingPlace.numberOfAccommodations);
+    await createAccountPage.fillDescriptionForm(createAccount.weddingPlace.vendorName, createAccount.weddingPlace.slogan, createAccount.weddingPlace.vendorDescription);
+    await createAccountPage.fillPackageForm(createAccount.weddingPlace.packageName, createAccount.weddingPlace.packagePrice, createAccount.weddingPlace.packageDescription, ["Talerzyk"]);
+    await createAccountPage.uploadPhotos([
+      createAccount.photos.weddingPlacePhoto1,
+      createAccount.photos.weddingPlacePhoto2,
+      createAccount.photos.weddingPlacePhoto3,
+      createAccount.photos.weddingPlacePhoto4,
+      createAccount.photos.weddingPlacePhoto5,
+      createAccount.photos.weddingPlacePhoto6,
+    ]);
+    await createAccountPage.addVideoLinks(createAccount.weddingPlace.videoLink);
+    await createAccountPage.setLocation(createAccount.weddingPlace.location);
+    await createAccountPage.setContactDetails(createAccount.weddingPlace.contactTitle);
     await createAccountPage.importReviews();
     await createAccountPage.addSocialMediaLinks(
-      createAccount.facebookLink,
-      createAccount.instaLink,
-      createAccount.tiktokLink,
-      createAccount.webPageLink,
+      createAccount.weddingPlace.facebookLink,
+      createAccount.weddingPlace.instaLink,
+      createAccount.weddingPlace.tiktokLink,
+      createAccount.weddingPlace.webPageLink,
     );
     await createAccountPage.attachFiles();
     await createAccountPage.checkCommunityCheckboxes();

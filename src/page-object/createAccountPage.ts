@@ -18,6 +18,7 @@ export class CreateAccountPage extends BasePage {
   readonly headerCreateProfile: Locator;
   readonly buttonCreateProfile: Locator;
   readonly bannerLoveLove: Locator;
+  readonly buttonEditProfile: Locator;
 
   //choose your services
   readonly headerDescribeYourServices: Locator;
@@ -28,6 +29,15 @@ export class CreateAccountPage extends BasePage {
 
   //accommodation
   readonly inputNumberOfAccomodations: Locator;
+
+  //music performer
+  readonly buttonPrivedCompere: Locator;
+  readonly buttonPriceContainsShow: Locator;
+  readonly buttonPriceContainsLiveAct: Locator;
+  readonly buttonPriceContainsGettingToPlace: Locator;
+  readonly buttonLightsTemperature: Locator;
+  readonly buttonDoYouExpectFood: Locator;
+  readonly buttonDoYouExpectAccommodation: Locator;
 
   //description
   readonly inputVendorName: Locator;
@@ -41,6 +51,8 @@ export class CreateAccountPage extends BasePage {
   readonly optionPriceForWhat: Locator;
   readonly inputPackageDescription: Locator;
   readonly buttonPackageContentPlate: Locator;
+  readonly buttonAddNewPackage: Locator;
+  readonly buttonDeletePackage: Locator;
 
   //video links
   readonly inputVideoLink: Locator;
@@ -50,6 +62,7 @@ export class CreateAccountPage extends BasePage {
   readonly optionLocation: Locator;
   readonly buttonClearLocation: Locator;
   readonly buttonAddLocation: Locator;
+  readonly buttonRemoveLocation: Locator;
 
   //contact details
   readonly inputContactTitle: Locator;
@@ -83,8 +96,9 @@ export class CreateAccountPage extends BasePage {
     this.buttonConfirmDelete = page.getByRole("dialog").getByRole("button", { name: "Usuń" });
     this.headerProfileNotExisting = page.locator("//div[@class='text-center py-5']/h4[@class='mb-4']");
     this.headerCreateProfile = page.locator("//div[@class='text-center py-5']/p[@class='mb-4']");
-    this.buttonCreateProfile = page.getByRole('button', { name: 'Utwórz profil' });
+    this.buttonCreateProfile = page.getByRole("button", { name: "Utwórz profil" });
     this.bannerLoveLove = page.locator("//img[@src='/assets/svg/logo_purple-BuUVvXEs.svg']");
+    this.buttonEditProfile = page.getByRole("link", { name: "Edytuj profil" });
 
     //choose your services
     this.headerDescribeYourServices = page.getByRole("heading", { name: "Określ swoje usługi" });
@@ -96,6 +110,17 @@ export class CreateAccountPage extends BasePage {
     //accommodation
     this.inputNumberOfAccomodations = page.getByPlaceholder("Noclegi na miejscu");
 
+    //music performer
+    this.buttonPrivedCompere = page.locator('//h3[contains(text(), "Czy zapewniasz konferansjerkę?")]/following::button[1]');
+    this.buttonPriceContainsShow = page.getByRole("button", { name: "Występ" });
+    this.buttonPriceContainsLiveAct = page.getByRole("button", { name: "Live Act" });
+    this.buttonPriceContainsGettingToPlace = page.getByRole("button", { name: "Dojazd" });
+    this.buttonLightsTemperature = page.getByRole("button", { name: "Ciepłe" });
+    this.buttonDoYouExpectFood = page.locator('//h3[contains(text(), "Czy oczekujesz zapewniania posiłku?")]/following::button[2]');
+    this.buttonDoYouExpectAccommodation = page.locator(
+      '//h3[contains(text(), "Czy oczekujesz zapewnienia noclegu?")]/following::button[2]',
+    );
+
     //description
     this.inputVendorName = page.getByRole("textbox", { name: "Nazwa działalności" });
     this.inputSlogan = page.getByRole("textbox", { name: "Krótki slogan" });
@@ -106,6 +131,10 @@ export class CreateAccountPage extends BasePage {
     this.inputPrice = page.getByPlaceholder("Cena w PLN");
     this.inputPackageDescription = page.getByRole("textbox", { name: "Opis usługi lub pakietu" });
     this.buttonPackageContentPlate = page.getByRole("button", { name: "Talerzyk" });
+    this.buttonAddNewPackage = page.locator(
+      "a.w-100.d-flex.align-items-center.fw-semibold.text-decoration-none.text-black.justify-content-center.font-afacad",
+    );
+    this.buttonDeletePackage = page.getByRole("link", { name: "usuń usługę lub pakiet" });
 
     //video links
     this.inputVideoLink = page.getByRole("textbox", { name: "Link do filmu" });
@@ -115,6 +144,7 @@ export class CreateAccountPage extends BasePage {
     this.optionLocation = page.getByText("WrocławPolska");
     this.buttonClearLocation = page.getByRole("button", { name: "Wrocław" }).getByRole("button");
     this.buttonAddLocation = page.getByRole("button", { name: "Dodaj" });
+    this.buttonRemoveLocation = page.locator("div.btn-close.border-0.btn.btn-primary");
 
     //contact details
     this.inputContactTitle = page.locator('//label[contains(text(), "Tytuł")]/following::input[1]');
@@ -145,16 +175,24 @@ export class CreateAccountPage extends BasePage {
     );
   }
   async setWeddingVendorParameters(name: string) {
-    await this.page.getByRole("button", { name }).click();
+    await this.page.getByRole("button", { name, exact: true }).click();
+  }
+  async setExactLocation(text: string) {
+    await this.page.getByText(text, { exact: true }).click();
   }
 
-  async chooseServices(): Promise<void> {
-    await this.buttonAddYourBusiness.click();
-    await this.buttonCreateAccount.click();
-    await this.buttonWeddingVenues.click();
+  async chooseServices(service: string): Promise<void> {
+    if (await this.buttonAddYourBusiness.isVisible()) {
+      await this.buttonAddYourBusiness.click();
+      await this.buttonCreateAccount.click();
+    } else {
+      await this.buttonEditProfile.click();
+    }
+    await this.setWeddingVendorParameters(service);
     await this.navigateToNextStep();
   }
 
+  //Wedding venue specific parameters
   async configureVenueType(
     venueType: string,
     venueStyle: string,
@@ -195,11 +233,11 @@ export class CreateAccountPage extends BasePage {
     await this.navigateToNextStep();
   }
 
-  async addBeverageOptions(warm: string, alcofree: string, alcohol: string): Promise<void> {
+  async addBeverageOptions(beverages: string[]): Promise<void> {
     await this.buttonServeBeverages.click();
-    await this.setWeddingVendorParameters(warm);
-    await this.setWeddingVendorParameters(alcofree);
-    await this.setWeddingVendorParameters(alcohol);
+    for (const beverage of beverages) {
+      await this.setWeddingVendorParameters(beverage);
+    }
     await this.navigateToNextStep();
   }
 
@@ -211,6 +249,64 @@ export class CreateAccountPage extends BasePage {
     await this.navigateToNextStep();
   }
 
+  //Music performer specific parameters
+
+  async choosePerformerType(performer: string): Promise<void> {
+    await this.setWeddingVendorParameters(performer);
+  }
+
+  async chooseMusicType(music: string[]): Promise<void> {
+    for (const type of music) {
+      await this.setWeddingVendorParameters(type);
+    }
+  }
+
+  async chooseLiveActInstruments(instruments: string[]): Promise<void> {
+    for (const instrument of instruments) {
+      await this.setWeddingVendorParameters(instrument);
+    }
+    await this.navigateToNextStep();
+  }
+
+  async chooseShowLanguages(languages: string[]): Promise<void> {
+    for (const language of languages) {
+      await this.setWeddingVendorParameters(language);
+    }
+  }
+
+  async chooseAdditionalAttractions(attractions: string[]): Promise<void> {
+    for (const attraction of attractions) {
+      await this.setWeddingVendorParameters(attraction);
+    }
+  }
+
+  async chooseEquipment(equipments: string[]): Promise<void> {
+    for (const equipment of equipments) {
+      await this.setWeddingVendorParameters(equipment);
+    }
+    if (await this.buttonLightsTemperature.isVisible()) {
+      await this.buttonLightsTemperature.click();
+    }
+    await this.navigateToNextStep();
+  }
+
+  async setScheduleDetails(from: number, to: number): Promise<void> {
+    await this.inputNumberFrom.fill(from.toString());
+    await this.inputNumberTo.fill(to.toString());
+    await this.buttonGenericQuestionAnswerYes.click();
+    if (await this.buttonGenericQuestionAnswerYes.isEnabled()) {
+      await this.buttonGenericQuestionAnswerNo.click();
+    }
+    await this.navigateToNextStep();
+  }
+
+  async setPartnerAccomodationDetails(): Promise<void> {
+    await this.buttonDoYouExpectFood.click();
+    await this.buttonDoYouExpectAccommodation.click();
+    await this.navigateToNextStep();
+  }
+
+  //Common parameters
   async fillDescriptionForm(name: string, slogan: string, description: string): Promise<void> {
     await this.inputVendorName.clear();
     await this.inputVendorName.fill(name);
@@ -220,30 +316,33 @@ export class CreateAccountPage extends BasePage {
     await this.inputVendorDescription.fill(description);
     await this.navigateToNextStep();
   }
+  async addNewPackage(): Promise<void> {
+    await this.buttonAddNewPackage.click();
+  }
 
-  async fillPackageForm(packageName: string, price: string, description: string): Promise<void> {
+  async deletePackage(index: number): Promise<void> {
+    await this.buttonDeletePackage.nth(index).click();
+  }
+
+  async fillPackageForm(packageName: string, price: string, description: string, packageContent: string[]): Promise<void> {
     await this.inputPackageName.clear();
     await this.inputPackageName.fill(packageName);
     await this.inputPrice.clear();
     await this.inputPrice.fill(price);
     await this.inputPackageDescription.clear();
     await this.inputPackageDescription.fill(description);
-    await this.buttonPackageContentPlate.click();
-    await sleep(2000);
+    for (const element of packageContent) {
+      await this.setWeddingVendorParameters(element);
+    }
+    await sleep(1000);
     await this.navigateToNextStep();
   }
 
-  async uploadPhotos(): Promise<void> {
-    const filePaths = [
-      "./src/fixtures/data/photos/test_photo_1.jpg",
-      "./src/fixtures/data/photos/test_photo_2.jpg",
-      "./src/fixtures/data/photos/test_photo_3.jpg",
-      "./src/fixtures/data/photos/test_photo_4.jpg",
-      "./src/fixtures/data/photos/test_photo_5.jpeg",
-      "./src/fixtures/data/photos/test_photo_6.jpeg",
-    ];
-    await this.page.setInputFiles('input[type="file"]', filePaths);
-    await this.buttonNext.click();
+  async uploadPhotos(filePaths: string[]): Promise<void> {
+    const basePath = "./src/fixtures/data/photos/";
+    const fullPaths = filePaths.map((filename) => `${basePath}${filename}`);
+    await this.page.setInputFiles('input[type="file"]', fullPaths);
+    await this.navigateToNextStep();
   }
 
   async addVideoLinks(link: string): Promise<void> {
@@ -255,9 +354,14 @@ export class CreateAccountPage extends BasePage {
   async setLocation(location: string): Promise<void> {
     await this.inputLocation.clear();
     await this.inputLocation.fill(location);
-    await this.optionLocation.click();
+    await this.setExactLocation(location + "Polska");
     await this.buttonAddLocation.click();
+    await sleep(1000);
     await this.navigateToNextStep();
+  }
+
+  async removeLocation(): Promise<void> {
+    await this.buttonRemoveLocation.click();
   }
 
   async setContactDetails(title: string): Promise<void> {
@@ -296,7 +400,11 @@ export class CreateAccountPage extends BasePage {
   async checkCommunityCheckboxes(): Promise<void> {
     const checkboxes = [this.checkboxLgbt, this.checkboxDisabledPeople, this.checkboxEnvironmentFriendly, this.checkboxPets];
     for (let checkbox of checkboxes) {
-      await checkbox.check();
+      if (await checkboxes[1].isVisible()) {
+        await checkbox.check();
+      } else {
+        await checkboxes[0].check();
+      }
     }
     await this.navigateToNextStep();
   }
@@ -333,6 +441,13 @@ export class CreateAccountPage extends BasePage {
       throw new Error(`Failed to delete profile. Status code: ${response.status()}`);
     }
 
+    await this.page.evaluate(() => {
+      return localStorage.removeItem("onboarded_status");
+    });
+
+    await this.page.reload();
+    await sleep(1000);
+
     console.log("Profile successfully deleted");
   }
 
@@ -342,7 +457,9 @@ export class CreateAccountPage extends BasePage {
     await this.optionSettings.click();
     await this.tabBusinessProfile.click();
     await expect(this.headerProfileNotExisting).toContainText("Nie znaleziono profilu biznesowego");
-    await expect(this.headerCreateProfile).toContainText("Wygląda na to, że nie masz jeszcze utworzonego profilu biznesowego. Utwórz profil, aby rozpocząć swoją przygodę z Love Love.");
+    await expect(this.headerCreateProfile).toContainText(
+      "Wygląda na to, że nie masz jeszcze utworzonego profilu biznesowego. Utwórz profil, aby rozpocząć swoją przygodę z Love Love.",
+    );
     await expect(this.buttonCreateProfile).toBeVisible();
   }
 }
