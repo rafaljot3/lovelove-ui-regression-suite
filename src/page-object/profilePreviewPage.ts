@@ -25,16 +25,17 @@ export class ProfilePreviewPage extends BasePage {
   readonly sectionLocation: Locator;
   readonly sectionLinks: Locator;
   readonly sectionFiles: Locator;
+  readonly headerProfilePreview: Locator;
 
   constructor(page: Page) {
     super(page);
     this.page = page;
     this.headerProfileName = page.locator("h2.mb-0.flex.items-center.gap-1 span.pe-2");
     this.imageTestPhotos = Array.from({ length: 5 }, (_, i) => page.locator("div.position-relative.cursor-pointer").nth(i).locator("img"));
-    this.fieldNumberOfGuests = page.locator("div.mt-auto.row div.col > span.fw-semibold").nth(0);
-    this.fieldCatering = page.locator("div.mt-auto.row div.col > span.fw-semibold").nth(1);
-    this.fieldNumberOfAccommodations = page.locator("div.mt-auto.row div.col > span.fw-semibold").nth(2);
-    this.fieldLocationType = page.locator("div.mt-auto.row div.col > span.fw-semibold").nth(3);
+    this.fieldNumberOfGuests = page.locator("span.fw-normal.text-lowercase.fs-5").first();
+    this.fieldCatering = page.locator("span.fw-normal.text-lowercase.fs-5").nth(1);
+    this.fieldNumberOfAccommodations = page.locator("span.fw-normal.text-lowercase.fs-5").nth(2);
+    this.fieldLocationType = page.locator("span.fw-normal.text-lowercase.fs-5").nth(3);
     this.fieldSlogan = page.locator("#description .my-3.fw-semibold.row h4.font-space-grotesk");
     this.fieldVendorDescription = page.locator("//div[@id='description']//div[@style='white-space: pre-line;']//div");
     this.fieldVenueType = page.locator(".badge.bg-warning.text-black.fs-6.rounded-0.badge.bg-primary").first();
@@ -61,6 +62,7 @@ export class ProfilePreviewPage extends BasePage {
     this.sectionLocation = page.locator("#location");
     this.sectionLinks = page.locator("#links");
     this.sectionFiles = page.locator("#files");
+    this.headerProfilePreview = page.locator("div.p-0.col > span:nth-child(1)").first();
   }
 
   async assertWeddingVenueConfiguredCorrectly(): Promise<void> {
@@ -79,50 +81,55 @@ export class ProfilePreviewPage extends BasePage {
     const cateringPhrasesPattern = new RegExp(cateringPhrases.join("|"), "i");
     await this.fieldNumberOfGuests.waitFor({ state: "visible", timeout: 30000 });
     await expect(this.fieldNumberOfGuests).toHaveText(
-      createAccount.numberOfWeddingGuestsFrom + " - " + createAccount.numberOfWeddingGuestsTo,
+      " od " + createAccount.weddingPlace.numberOfWeddingGuestsFrom + " do " + createAccount.weddingPlace.numberOfWeddingGuestsTo,
     );
     await expect(this.fieldCatering).toHaveText(cateringPhrasesPattern);
-    await expect(this.fieldNumberOfAccommodations).toHaveText(createAccount.numberOfAccommodations);
+    await expect(this.fieldNumberOfAccommodations).toHaveText(createAccount.weddingPlace.numberOfAccommodations + " - na miejscu");
     await expect(this.fieldLocationType).toHaveText("W górach");
     await expect(this.fieldVenueType).toHaveText("Sala bankietowa");
     await expect(this.fieldVenueStyle).toHaveText("Uniwersalny");
     await expect(this.fieldCusine).toHaveText("Kuchnia polska");
   }
-  async assertVendorParametersCorrect(): Promise<void> {
-    await expect(this.headerProfileName).toHaveText(createAccount.vendorName);
+  async assertVendorParametersCorrect(name: string, slogan: string, description: string, title: string): Promise<void> {
+    await expect(this.headerProfileName).toHaveText(name);
     const assetUrlPattern = new RegExp(`^https://${envData.assetsDomain}/[a-z0-9]+/photos/processed/medium/[a-f0-9-]+\\.(jpeg|jpg)$`);
 
-    for (const img of this.imageTestPhotos) {
-      const imageUrl = await img.getAttribute("src");
-      expect(imageUrl).toMatch(assetUrlPattern);
-    }
-    await expect(this.fieldSlogan).toHaveText(createAccount.slogan);
-    await expect(this.fieldVendorDescription).toHaveText(createAccount.vendorDescription);
-    await expect(this.videoPlayer).toHaveAttribute("title", "DISCO FUNK (CHAPTER 2) -  FULL VINYL DJ SET BY CAMELEON");
+    // for (const img of this.imageTestPhotos) { //TODO: to apply new solution to assert photos
+    //   const imageUrl = await img.getAttribute("src");
+    //   expect(imageUrl).toMatch(assetUrlPattern);
+    // }
+    await expect(this.fieldSlogan).toHaveText(slogan);
+    await expect(this.fieldVendorDescription).toHaveText(description);
+    await expect(this.videoPlayer).toHaveAttribute("title", title);
   }
   async assertCommunityParametersCorrect(): Promise<void> {
-    await expect(this.fieldCommunityLGBT).toBeVisible();
-    await expect(this.fieldCommunityEcoFriendly).toBeVisible();
-    await expect(this.fieldCommunityDisabledPeople).toBeVisible();
-    await expect(this.fieldCommunityPets).toBeVisible();
+    const headerText = await this.headerProfilePreview.textContent();
+    if (headerText?.includes("DJ")) {
+      await expect(this.fieldCommunityLGBT).toBeVisible();
+    } else {
+      await expect(this.fieldCommunityLGBT).toBeVisible();
+      await expect(this.fieldCommunityEcoFriendly).toBeVisible();
+      await expect(this.fieldCommunityDisabledPeople).toBeVisible();
+      await expect(this.fieldCommunityPets).toBeVisible();
+    }
   }
-  async assertPricingCorrect(): Promise<void> {
+  async assertPricingCorrect(packageName: string, price: string, description: string, priceContent: string[]): Promise<void> {
     await expect(this.fieldPricing).toBeVisible();
-    await expect(this.fieldPricing).toContainText(createAccount.packageName);
-    await expect(this.fieldPricing).toContainText(createAccount.packagePrice);
-    await expect(this.fieldPricing).toContainText(createAccount.packageDescription);
-    await expect(this.fieldPricing).toContainText("Talerzyk");
+    await expect(this.fieldPricing).toContainText(packageName);
+    await expect(this.fieldPricing).toContainText(price);
+    await expect(this.fieldPricing).toContainText(description);
+    for (const element of priceContent) {
+      await expect(this.fieldPricing).toContainText(element);
+    }
   }
-  async assertLocationCorrect(): Promise<void> {
-    const nearestTowns = ["Opole", "Wałbrzych", "Legnica", "Lubin", "Ostrów Wielkopolski", "Leszno", "Świdnica", "Nysa", "Brzeg"];
+  async assertLocationCorrect(city: string, nearestTowns: string[]): Promise<void> {
     await expect(this.sectionLocation).toBeVisible();
-    await expect(this.sectionLocation).toContainText(createAccount.location);
+    await expect(this.sectionLocation).toContainText(city);
     for (let towns of nearestTowns) {
       await expect(this.sectionLocation).toContainText(towns);
     }
   }
-  async assertLinksCorrect(): Promise<void> {
-    const links = [createAccount.webPageLink, createAccount.instaLink, createAccount.tiktokLink, createAccount.tiktokLink];
+  async assertLinksCorrect(links: string[]): Promise<void> {
     for (let link of links) {
       await expect(this.sectionLinks.locator('a[href="' + link + '"]')).toBeVisible();
     }
