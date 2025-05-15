@@ -36,7 +36,7 @@ export class ProfilePreviewPage extends BasePage {
     this.fieldCatering = page.locator("span.fw-normal.text-lowercase.fs-5").nth(1);
     this.fieldNumberOfAccommodations = page.locator("span.fw-normal.text-lowercase.fs-5").nth(2);
     this.fieldLocationType = page.locator("span.fw-normal.text-lowercase.fs-5").nth(3);
-    this.fieldSlogan = page.locator("#description .my-3.fw-semibold.row h4.font-space-grotesk");
+    this.fieldSlogan = page.locator("#description h2");
     this.fieldVendorDescription = page.locator("//div[@id='description']//div[@style='white-space: pre-line;']//div");
     this.fieldVenueType = page.locator(".badge.bg-warning.text-black.fs-6.rounded-0.badge.bg-primary").first();
     this.fieldVenueStyle = page.locator(".badge.bg-warning.text-black.fs-6.rounded-0.badge.bg-primary").nth(1);
