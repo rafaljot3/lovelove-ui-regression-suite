@@ -30,7 +30,7 @@ export class ProfilePreviewPage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.page = page;
-    this.headerProfileName = page.locator("h2.mb-0.flex.items-center.gap-1 span.pe-2");
+    this.headerProfileName = page.locator("h1");
     this.imageTestPhotos = Array.from({ length: 5 }, (_, i) => page.locator("div.position-relative.cursor-pointer").nth(i).locator("img"));
     this.fieldNumberOfGuests = page.locator("span.fw-normal.text-lowercase.fs-5").first();
     this.fieldCatering = page.locator("span.fw-normal.text-lowercase.fs-5").nth(1);
