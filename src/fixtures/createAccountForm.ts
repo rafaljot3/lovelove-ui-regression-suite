@@ -26,7 +26,7 @@ export const createAccount: CreateAccountForm = {
     nearestTowns: ["Opole", "Wałbrzych", "Legnica"],
   },
   dj: {
-    vendorName: "Dj Beza Music&Entertainment",
+    vendorName: "DJ Beza Music&Entertainment",
     slogan: "We don't play Disco Polo",
     vendorDescription: "I'm the best wedding DJ in the world. I don't like Disco Polo and bicycles.",
     packageName: "DJ Package 1 - basic",

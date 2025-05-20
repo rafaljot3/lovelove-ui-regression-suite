@@ -21,6 +21,7 @@ export class ProfilePreviewPage extends BasePage {
   readonly fieldCommunityDisabledPeople: Locator;
   readonly fieldCommunityPets: Locator;
   readonly videoPlayer: Locator;
+  readonly textVideos: Locator;
   readonly fieldPricing: Locator;
   readonly sectionLocation: Locator;
   readonly sectionLinks: Locator;
@@ -30,13 +31,13 @@ export class ProfilePreviewPage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.page = page;
-    this.headerProfileName = page.locator("h1");
+    this.headerProfileName = page.locator("h1.mb-0.flex.items-center.h2");
     this.imageTestPhotos = Array.from({ length: 5 }, (_, i) => page.locator("div.position-relative.cursor-pointer").nth(i).locator("img"));
     this.fieldNumberOfGuests = page.locator("span.fw-normal.text-lowercase.fs-5").first();
     this.fieldCatering = page.locator("span.fw-normal.text-lowercase.fs-5").nth(1);
     this.fieldNumberOfAccommodations = page.locator("span.fw-normal.text-lowercase.fs-5").nth(2);
     this.fieldLocationType = page.locator("span.fw-normal.text-lowercase.fs-5").nth(3);
-    this.fieldSlogan = page.locator("#description .my-3.fw-semibold.row h4.font-space-grotesk");
+    this.fieldSlogan = page.locator("//div[@id='description']//div[@class = 'my-3 fw-semibold row']//h2");
     this.fieldVendorDescription = page.locator("//div[@id='description']//div[@style='white-space: pre-line;']//div");
     this.fieldVenueType = page.locator(".badge.bg-warning.text-black.fs-6.rounded-0.badge.bg-primary").first();
     this.fieldVenueStyle = page.locator(".badge.bg-warning.text-black.fs-6.rounded-0.badge.bg-primary").nth(1);
@@ -63,6 +64,7 @@ export class ProfilePreviewPage extends BasePage {
     this.sectionLinks = page.locator("#links");
     this.sectionFiles = page.locator("#files");
     this.headerProfilePreview = page.locator("div.p-0.col > span:nth-child(1)").first();
+    this.textVideos = page.getByRole('heading', { name: 'Filmy' });
   }
 
   async assertWeddingVenueConfiguredCorrectly(): Promise<void> {
@@ -100,10 +102,11 @@ export class ProfilePreviewPage extends BasePage {
     // }
     await expect(this.fieldSlogan).toHaveText(slogan);
     await expect(this.fieldVendorDescription).toHaveText(description);
+    await this.textVideos.scrollIntoViewIfNeeded();
     await expect(this.videoPlayer).toHaveAttribute("title", title);
   }
   async assertCommunityParametersCorrect(): Promise<void> {
-    const headerText = await this.headerProfilePreview.textContent();
+    const headerText = await this.headerProfileName.textContent();
     if (headerText?.includes("DJ")) {
       await expect(this.fieldCommunityLGBT).toBeVisible();
     } else {
