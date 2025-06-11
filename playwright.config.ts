@@ -25,10 +25,10 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'webkit',
-      use: { ...devices['iPhone 13'] },
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['iPhone 13'] },
+    // },
   ],
 
 });
