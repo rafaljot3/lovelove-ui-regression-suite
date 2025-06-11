@@ -1,9 +1,10 @@
-import { expect, test } from "@playwright/test";
+//import { expect, test } from "@playwright/test";
 
 import { LoginPage } from "../page-object/loginPage";
 import { envData } from "../fixtures/envData";
 import { CreateAccountPage } from "../page-object/createAccountPage";
 import { createAccount } from "../fixtures/createAccountForm";
+import { test } from '../fixtures/amenitiesAnswers';
 import { ProfilePreviewPage } from "../page-object/profilePreviewPage";
 
 test.describe("Create vendor account tests", () => {
@@ -15,7 +16,7 @@ test.describe("Create vendor account tests", () => {
     console.log("User is logged in.");
   });
 
-  test("should create and remove a wedding venue vendor user account", async ({ page }) => {
+  test("should create and remove a wedding venue vendor user account", async ({ page, amenitiesAnswersPattern }) => {
     const createAccountPage = new CreateAccountPage(page);
     const profilePreviewPage = new ProfilePreviewPage(page);
     await createAccountPage.deleteProfile();
@@ -68,7 +69,7 @@ test.describe("Create vendor account tests", () => {
     );
     await createAccountPage.attachFiles();
     await createAccountPage.checkCommunityCheckboxes();
-    await profilePreviewPage.assertWeddingVenueConfiguredCorrectly();
+    await profilePreviewPage.assertWeddingVenueConfiguredCorrectly(amenitiesAnswersPattern);
     await profilePreviewPage.assertVendorParametersCorrect(
       createAccount.weddingPlace.vendorName,
       createAccount.weddingPlace.slogan,
@@ -95,7 +96,7 @@ test.describe("Create vendor account tests", () => {
     await createAccountPage.assertProfileDeleted();
   });
 
-  test("should create and edit dj account", async ({ page, browserName }) => {
+  test("should create and edit dj account", async ({ page, browserName, amenitiesAnswersPattern }) => {
     if (browserName === "webkit") {
       test.skip();
     }
@@ -120,7 +121,7 @@ test.describe("Create vendor account tests", () => {
       createAccount.dj.packageName,
       createAccount.dj.packagePrice,
       createAccount.dj.packageDescription,
-      ["Występ", "Live Act"],
+      ["Live Act"],
     );
     await createAccountPage.uploadPhotos([
       createAccount.photos.djPhoto1,
@@ -152,7 +153,7 @@ test.describe("Create vendor account tests", () => {
       createAccount.dj.packageName,
       createAccount.dj.packagePrice,
       createAccount.dj.packageDescription,
-      ["Występ", "Live Act"],
+      ["Live Act"],
     );
     await profilePreviewPage.assertLocationCorrect(createAccount.dj.location, createAccount.dj.nearestTowns);
     await profilePreviewPage.assertLinksCorrect([
@@ -222,6 +223,7 @@ test.describe("Create vendor account tests", () => {
       createAccount.dj.newVideoTitle,
     );
     await profilePreviewPage.assertCommunityParametersCorrect();
+    await profilePreviewPage.assertMusicPerformerConfiguredCorrectly("DJ", amenitiesAnswersPattern);
     await profilePreviewPage.assertPricingCorrect(
       createAccount.dj.newPackageName,
       createAccount.dj.newPackagePrice,

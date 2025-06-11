@@ -98,7 +98,7 @@ export class CreateAccountPage extends BasePage {
     this.headerCreateProfile = page.locator("//div[@class='text-center py-5']/p[@class='mb-4']");
     this.buttonCreateProfile = page.getByRole("button", { name: "Utwórz profil" });
     this.bannerLoveLove = page.locator("//img[@src='/assets/svg/logo_purple-BuUVvXEs.svg']");
-    this.buttonEditProfile = page.getByRole("link", { name: "Edytuj profil" });
+    this.buttonEditProfile = page.getByRole("link", { name: "Edytuj" });
 
     //choose your services
     this.headerDescribeYourServices = page.getByRole("heading", { name: "Określ swoje usługi" });

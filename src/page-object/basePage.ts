@@ -17,7 +17,7 @@ export class BasePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.iconHamburgerMenu = page.locator('img[alt="menu icon"]');
+    this.iconHamburgerMenu = page.getByRole('button', { name: 'Menu hamburger Menu' });
     this.optionLogIn = page.locator('//a[contains(text(), "Zaloguj się")]');
     this.optionLogOut = page.locator('//a[contains(text(), "Wyloguj się")]');
     this.optionSettings = page.locator('//a[contains(text(), "Ustawienia")]');
